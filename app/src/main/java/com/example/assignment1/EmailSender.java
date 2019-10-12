@@ -2,8 +2,12 @@ package com.example.assignment1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,20 +17,16 @@ import android.widget.Toast;
 
 import java.net.URI;
 
+
+
 public class EmailSender extends AppCompatActivity {
 
 
-    String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_email_sender);
-        EditText txt = findViewById(R.id.editText2);
-        Intent mainIntent = getIntent();
-        String receivermail = mainIntent.getStringExtra("Receiver");
-        txt.setText(receivermail);
-        email = receivermail;
 
         Button sendbtn = (Button) findViewById(R.id.sendEmail);
 
@@ -37,26 +37,28 @@ public class EmailSender extends AppCompatActivity {
         });
     }
 
+
     public void sendMail()
     {
         EditText subtxt =  findViewById(R.id.editText5); //For Subject of Mail..
         EditText bodytxt = findViewById(R.id.editText3); //for Body of mail....
-
+        EditText ml   = findViewById(R.id.editText2) ; //Mail
         String stxt = subtxt.getText().toString();
-
+        String TO = ml.getText().toString();
         String btxt  = bodytxt.getText().toString();
-
+        String[] Rmail = new String[] {TO};
         Log.i("Send Email" , "");
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setData(Uri.parse("mailto:"));
-        emailIntent.setType("text/plan");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL ,email); // Receiver Mail Address
+        emailIntent.setType("plain/text");
         emailIntent.putExtra(Intent.EXTRA_SUBJECT , stxt); //Subject of mail
         emailIntent.putExtra(Intent.EXTRA_TEXT , btxt);// Body of Email
+        emailIntent.putExtra(Intent.EXTRA_EMAIL , Rmail);
+
         try
         {
-            startActivity(Intent.createChooser(emailIntent , "SendMail..."));
-            finish();
+                startActivity(Intent.createChooser(emailIntent, "sending Mail"));
+                finish();
         }catch (android.content.ActivityNotFoundException ex)
         {
             Toast.makeText(this, "Error to Mail", Toast.LENGTH_SHORT).show();
